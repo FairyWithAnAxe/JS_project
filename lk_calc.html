@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link id="theme" rel="stylesheet" href="../bootstrap_quartz.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row justify-content-end">
+            <div class="col-2">
+                <p>Выберите тему</p>
+            </div>
+            <div class="col-2">
+                <select name="background" id="background" onchange="changeTheme(this.value)">
+                    <!-- <option disabled selected="selected">Выберите тему</option> -->
+                    <option value="quartz">quartz</option>
+                    <option value="sketchy">sketchy</option>
+                    <option value="darkly">darkly</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <div class="container mt-3">
+        <div class="row justify-content-center">
+            <div class="col-6">
+                <h1 class="mb-2">Калькулятор алкоголя</h1>
+                <form id="form" class="form-check needs-validation" onsubmit="return false;" novalidate>
+
+                    <div class="row justify-content-center mb-2">
+                        <div class="col-4">
+                            <br />
+                            <label class="form-check-label" for="sex">Ваш пол</label>
+                        </div>
+                        <div class="col-4">
+                            <br />Женщина
+                            <input class="form-check-input" type="radio" name=sex value="0.6" checked />
+                        </div>
+                        <div class="col-4">
+                            <br />Мужчина
+                            <input class="form-check-input" type="radio" name=sex value="0.7" />
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label" for="weight">Масса тела (кг)</label>
+                        <input name="weight" type="text" id="weight" required />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-check-label" for="height">Рост (см)</label>
+                        <input name="height" type="text" id="height" />
+                    </div>
+                    <div class="mb-2">Алкоголь:
+                        <select id="drinks" name="drinks">
+                            <option name="strength" value="1">Не выбрано</option>
+                            <option name="strength" value="5">Пиво</option>
+                            <option name="strength" value="12">Вино</option>
+                            <option name="strength" value="21">Ликер</option>
+                            <option name="strength" value="40">Водка, виски, ром</option>
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-check-label" for="volume">Количество (мл)</label>
+                        <input name="volume" type="text" id="volume" />
+                    </div>
+                    <div>
+                        <button class="btn btn-danger" id="btn" onclick="calc()">Посчитать</button>
+                    </div>
+                    <!-- <div id="result"></div> -->
+                </form>
+            </div>
+
+
+
+            <div class="col-6 mt-5">
+                <div id="result">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">#</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- <tr>
+                            <th scope="row">Пол</th>
+                            <td>-</td>
+                        </tr> -->
+                            <tr>
+                                <th scope="row">Масса тела (кг)</th>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Рост (см)</th>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Крепость алкоголя (%)</th>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Количество выпитого (мл)</th>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="table-danger">Содержание алкоголя в крови (промилли)</th>
+                                <td class="table-danger">-</td>
+                            </tr>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function changeTheme(sender) {
+            switch (sender) {
+                case "quartz":
+                    document.getElementById("theme").href = "../bootstrap_quartz.css";
+                    break;
+                case "sketchy":
+                    document.getElementById("theme").href = "../bootstrap_sketchy.css";
+                    break;
+                case "darkly":
+                    document.getElementById("theme").href = "../bootstrap_darkly.css";
+                    break;
+            // switch (document.getElementById("background").value) {
+            //     case "quartz":
+            //         document.getElementById("theme").href = "../bootstrap_quartz.css";
+            //         break;
+            //     case "sketchy":
+            //         document.getElementById("theme").href = "../bootstrap_sketchy.css";
+            //         break;
+            //     case "darkly":
+            //         document.getElementById("theme").href = "../bootstrap_darkly.css";
+            //         break;
+            }
+        }
+
+        
+
+        const calc = () => {
+            const weight = document.querySelector('#weight').value;
+            const height = document.querySelector('#height').value;
+            const volume = document.querySelector('#volume').value;
+            const strength = document.querySelector('#drinks option:checked').value;
+            // console.log("strength", strength)
+            // const strength2 = document.querySelector('#drinks select').value;
+            // console.log("strength2", strength2)
+            const sex = document.querySelector('input[type="radio"]:checked').value;
+
+            //let result = Math.round(volume * (strength*0.01) / (weight * sex));
+            let result = +(Math.round(((volume * (strength * 0.01) / (weight * sex))) + "e+2") + "e-2");
+
+
+
+            saveToLocalStorage();
+
+            generateTable (weight, height, strength, volume, result);
+        }
+
+        saveToLocalStorage = (weight) => {
+            if (weight) {
+                localStorage.setItem("weight", JSON.stringify(weight));
+            }
+        }
+
+        const getFromLocalStorage = () => {
+            // mappedData = localStorage.getItem("lastSearch") ? JSON.parse(localStorage.getItem(
+            //                 "lastSearch")) : [];
+            weight = localStorage.getItem("weight") ? JSON.parse(localStorage.getItem(
+                "weight")) : '';
+            // пустая страница при пустом массиве в локал сторидж, если предыдущий поиск не получил результата 
+        }
+
+        const generateTable = (weight, height, strength, volume, result) => {
+            document.getElementById('result').innerHTML = `<div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">#</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">Масса тела (кг)</th>
+                            <td>${weight}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Рост (см)</th>
+                            <td>${height}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Крепость алкоголя (%)</th>
+                            <td>${strength}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Количество выпитого (мл)</th>
+                            <td>${volume}</td>
+                        </tr>
+                        <tr>
+                            <th class="table-danger" scope="row">Содержание алкоголя в крови (промилли)</th>
+                            <td class="table-danger">${result}</td>
+                        </tr>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>`
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // getFromLocalStorage();
+            // generateTable();
+        })
+    </script>
+</body>
+
+</html>
